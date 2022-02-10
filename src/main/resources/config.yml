@@ -1,0 +1,24 @@
+# MySQL
+storage-method: "MySQL"
+
+mysql:
+  address: "localhost"
+  port: 3306
+  database: "minecraft"
+  username: "root"
+  password: "password"
+  useSSL: true
+
+# How often to save in seconds
+auto-save-interval: 300
+
+# EST
+timezone: "America/New_York"
+
+domains:
+  - "play.example.net:25565"
+  - "hub.example.net:25565"
+
+display:
+  - "default"
+  - "hub"

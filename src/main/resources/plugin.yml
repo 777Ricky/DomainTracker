@@ -1,0 +1,6 @@
+name: DomainTracker
+version: '${project.version}'
+main: me.rickylafleur.domaintracker.DomainTracker
+api-version: 1.12
+depend: [ helper ]
+authors: [ Ricky Lafleur ]
