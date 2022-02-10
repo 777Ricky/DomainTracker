@@ -1,9 +1,10 @@
 package me.rickylafleur.domaintracker;
 
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.ap.Plugin;
 import me.lucko.helper.plugin.ap.PluginDependency;
+import me.rickylafleur.domaintracker.commands.JoinsCommand;
+import me.rickylafleur.domaintracker.listeners.JoinListener;
 import me.rickylafleur.domaintracker.storage.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,7 +20,7 @@ import java.util.logging.Level;
         version = "1.0",
         authors = {"Ricky Lafleur"},
         depends = {@PluginDependency("helper")},
-        apiVersion = "1.18"
+        apiVersion = "1.12"
 )
 public final class DomainTracker extends ExtendedJavaPlugin {
 
@@ -46,22 +47,10 @@ public final class DomainTracker extends ExtendedJavaPlugin {
         reload();
 
         // Commands
+        bindModule(new JoinsCommand(this));
 
         // Listeners
-
-        // Save cache to database
-        Schedulers.async().runRepeating(() -> {
-            if (database.getJoinCache().isEmpty()) return;
-
-            database.getJoinCache().forEach((uuid, joinData) -> database.addData(
-                    joinData.getDate(),
-                    joinData.getUuid().toString(),
-                    joinData.getDomain(),
-                    joinData.getCountry()
-            ));
-
-            database.getJoinCache().clear();
-        }, 20 * 30, 20 * getConfig().getLong("auto-save-interval"));
+        bindModule(new JoinListener(this));
     }
 
     @Override

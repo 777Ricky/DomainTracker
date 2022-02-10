@@ -4,13 +4,10 @@ import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CountryResponse;
 import me.rickylafleur.domaintracker.DomainTracker;
-import me.rickylafleur.domaintracker.storage.objects.JoinData;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,8 +16,6 @@ import java.util.UUID;
 public class Database {
 
     private final DomainTracker plugin;
-
-    public final Map<UUID, JoinData> joinCache = new HashMap<>();
 
     private Connection connection;
 
@@ -74,10 +69,6 @@ public class Database {
         }
     }
 
-    public boolean containsPlayer(UUID uuid) {
-        return joinCache.containsKey(uuid);
-    }
-
     public boolean playerExists(UUID uuid) {
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM domain_tracker WHERE UUID = ?;");
@@ -95,10 +86,6 @@ public class Database {
         }
 
         return false;
-    }
-
-    public Map<UUID, JoinData> getJoinCache() {
-        return joinCache;
     }
 
     public String getCountryFromIp(String ip) {
