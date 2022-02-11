@@ -4,11 +4,15 @@ import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CountryResponse;
 import me.lucko.helper.Schedulers;
 import me.rickylafleur.domaintracker.DomainTracker;
+import me.rickylafleur.domaintracker.storage.objects.JoinData;
 import org.bukkit.Bukkit;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -71,6 +75,37 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Map<String, JoinData> getJoinData(String date) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM domain_tracker WHERE DATE = ?;");
+            ps.setString(1, date);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (ps.isClosed()) return Collections.emptyMap();
+
+            Map<String, JoinData> joinDataMap = new HashMap<>();
+
+            while (rs.next()) {
+                joinDataMap.put(date, new JoinData(
+                        rs.getString("DATE"),
+                        UUID.fromString(rs.getString("UUID")),
+                        rs.getString("DOMAIN"),
+                        rs.getString("COUNTRY")
+                ));
+            }
+
+            ps.close();
+            rs.close();
+
+            return joinDataMap;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyMap();
     }
 
     public boolean playerExists(UUID uuid) {

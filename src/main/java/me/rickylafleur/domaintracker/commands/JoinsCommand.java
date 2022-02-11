@@ -5,6 +5,7 @@ import me.lucko.helper.Commands;
 import me.lucko.helper.terminable.TerminableConsumer;
 import me.lucko.helper.terminable.module.TerminableModule;
 import me.rickylafleur.domaintracker.DomainTracker;
+import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nonnull;
 
@@ -18,6 +19,15 @@ public class JoinsCommand implements TerminableModule {
 
     @Override
     public void setup(@Nonnull TerminableConsumer consumer) {
+        Commands.create()
+                .assertPermission("domaintracker.admin")
+                .assertUsage("<MM/dd/yyyy>")
+                .handler(c -> {
+                    CommandSender sender = c.sender();
+                    String date = c.arg(0).parseOrFail(String.class);
 
+
+                })
+                .register("domaintracker");
     }
 }

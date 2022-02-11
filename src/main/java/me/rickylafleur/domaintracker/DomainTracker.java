@@ -129,8 +129,8 @@ public final class DomainTracker extends ExtendedJavaPlugin {
         }
         try {
             maxMindReader = new DatabaseReader.Builder(databaseFile).build();
-        } catch (final IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -185,7 +185,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
             }
             output.close();
             input.close();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
