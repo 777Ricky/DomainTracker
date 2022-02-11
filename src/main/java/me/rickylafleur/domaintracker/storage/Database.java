@@ -1,14 +1,16 @@
 package me.rickylafleur.domaintracker.storage;
 
-import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CountryResponse;
+import me.lucko.helper.Schedulers;
 import me.rickylafleur.domaintracker.DomainTracker;
+import org.bukkit.Bukkit;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.*;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * @author Ricky Lafleur
@@ -30,6 +32,8 @@ public class Database {
                     plugin.getConfig().getString("mysql.username"),
                     plugin.getConfig().getString("mysql.password")
             );
+
+            Schedulers.async().run(this::createTable);
         }
     }
 
@@ -88,18 +92,26 @@ public class Database {
         return false;
     }
 
-    public String getCountryFromIp(String ip) {
-        try (WebServiceClient client = new WebServiceClient.Builder(674567, "Idmm6uSvBSOjmKQE")
-                .build()) {
-
-            InetAddress ipAddress = InetAddress.getByName(ip);
-            CountryResponse response = client.country(ipAddress);
+    public String getCountryFromIp(InetAddress address) {
+        try {
+            CountryResponse response = plugin.getMaxMindReader().country(address);
 
             return response.getCountry().getName();
         } catch (IOException | GeoIp2Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.INFO, "IP not found in database defaulting to N/A");
         }
 
         return "N/A";
+    }
+
+    private void createTable() {
+        try {
+            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS domain_tracker (`DATE` char(10), `UUID` char(36), `DOMAIN` char(50), `COUNTRY` char(50));");
+            ps.executeUpdate();
+
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -37,6 +37,37 @@
                     <release>11</release>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>shade</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>${project.name}-${project.version}</finalName>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.maxmind</pattern>
+                            <shadedPattern>me.rickylafleur.domaintracker.utils.maxmind</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>me.lucko.helper</pattern>
+                            <shadedPattern>me.rickylafleur.domaintracker.utils.helper</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.apache.ant</pattern>
+                            <shadedPattern>me.rickylafleur.domaintracker.utils.apache</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -78,6 +109,11 @@
             <groupId>com.maxmind.geoip2</groupId>
             <artifactId>geoip2</artifactId>
             <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.11</version>
         </dependency>
     </dependencies>
 </project>

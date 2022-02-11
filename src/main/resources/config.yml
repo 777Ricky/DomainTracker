@@ -6,8 +6,16 @@ mysql:
   port: 3306
   database: "minecraft"
   username: "root"
-  password: "password"
-  useSSL: true
+  password: ""
+  useSSL: false
+
+database:
+  license-key: ""
+  download-url: "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key={LICENSEKEY}&suffix=tar.gz"
+  download-if-missing: true
+  update:
+    enabled: true
+    every-x-days: 30
 
 # How often to save in seconds
 auto-save-interval: 300
@@ -16,6 +24,7 @@ auto-save-interval: 300
 timezone: "America/New_York"
 
 domains:
+  - "localhost:25565"
   - "play.example.net:25565"
   - "hub.example.net:25565"
 
