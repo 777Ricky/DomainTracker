@@ -43,17 +43,18 @@ public final class DomainTracker extends ExtendedJavaPlugin {
     protected void enable() {
         plugin = this;
 
+        reload();
+
         database = new Database(this);
 
         try {
             database.connect();
         } catch (SQLException e) {
             e.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
         }
 
         Bukkit.getLogger().log(Level.INFO, "Database connected successfully!");
-
-        reload();
 
         Schedulers.async().run(this::checkDatabase);
 

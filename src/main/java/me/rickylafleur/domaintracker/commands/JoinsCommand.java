@@ -35,7 +35,10 @@ public class JoinsCommand implements TerminableModule {
                     Player player = c.sender();
                     String date = c.arg(0).parseOrFail(String.class);
 
-                    Promise<Set<JoinData>> promise = Promise.start().thenApplyAsync(map -> plugin.getDatabase().getJoinData(date));
+                    if (date.equalsIgnoreCase("today")) date = plugin.getFormat().format(new Date());
+
+                    String finalDate = date;
+                    Promise<Set<JoinData>> promise = Promise.start().thenApplyAsync(map -> plugin.getDatabase().getJoinData(finalDate));
 
                     try {
                         Set<JoinData> joinDataSet = promise.get();
@@ -69,6 +72,6 @@ public class JoinsCommand implements TerminableModule {
                         e.printStackTrace();
                     }
                 })
-                .register("domaintracker");
+                .register("domaintracker", "joins");
     }
 }
