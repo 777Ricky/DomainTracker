@@ -1,6 +1,3 @@
-# MySQL
-storage-method: "MySQL"
-
 mysql:
   address: "localhost"
   port: 3306
@@ -17,17 +14,43 @@ database:
     enabled: true
     every-x-days: 30
 
-# How often to save in seconds
-auto-save-interval: 300
-
-# EST
-timezone: "America/New_York"
-
 domains:
   - "localhost:25565"
-  - "play.example.net:25565"
-  - "hub.example.net:25565"
+  - "localhost:25565"
+  - "localhost:25565"
 
 display:
-  - "default"
-  - "hub"
+  - "test1"
+  - "test2"
+  - "test3"
+
+countries:
+  - "United States"
+  - "Canada"
+  - "United Kingdom"
+  - "Netherlands"
+  - "Belgium"
+  - "Germany"
+  - "Australia"
+  - "Poland"
+  - "Czechia"
+  - "Malaysia"
+  - "Latvia"
+  - "Vietnam"
+  - "Sweden"
+  - "Austria"
+  - "Pakistan"
+  - "El Salvador"
+  - "Serbia"
+  - "France"
+  - "New Zealand"
+  - "United Arab Emirates"
+  - "India"
+  - "Spain"
+  - "Turkey"
+  - "Norway"
+  - "Finland"
+  - "Denmark"
+  - "Mexico"
+  - "Brazil"
+  - "Unknown"

@@ -10,10 +10,7 @@ import org.bukkit.Bukkit;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -77,19 +74,19 @@ public class Database {
         }
     }
 
-    public Map<String, JoinData> getJoinData(String date) {
+    public Set<JoinData> getJoinData(String date) {
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM domain_tracker WHERE DATE = ?;");
             ps.setString(1, date);
 
             ResultSet rs = ps.executeQuery();
 
-            if (ps.isClosed()) return Collections.emptyMap();
+            if (ps.isClosed()) return Collections.emptySet();
 
-            Map<String, JoinData> joinDataMap = new HashMap<>();
+            Set<JoinData> joinDataSet = new HashSet<>();
 
             while (rs.next()) {
-                joinDataMap.put(date, new JoinData(
+                joinDataSet.add(new JoinData(
                         rs.getString("DATE"),
                         UUID.fromString(rs.getString("UUID")),
                         rs.getString("DOMAIN"),
@@ -100,12 +97,12 @@ public class Database {
             ps.close();
             rs.close();
 
-            return joinDataMap;
+            return joinDataSet;
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return Collections.emptyMap();
+        return Collections.emptySet();
     }
 
     public boolean playerExists(UUID uuid) {
@@ -133,10 +130,10 @@ public class Database {
 
             return response.getCountry().getName();
         } catch (IOException | GeoIp2Exception e) {
-            Bukkit.getLogger().log(Level.INFO, "IP not found in database defaulting to N/A");
+            Bukkit.getLogger().log(Level.INFO, "IP not found in database defaulting to Unknown");
         }
 
-        return "N/A";
+        return "Unknown";
     }
 
     private void createTable() {
