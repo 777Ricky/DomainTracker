@@ -4,20 +4,18 @@ import com.maxmind.geoip2.DatabaseReader;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.ap.Plugin;
-import me.lucko.helper.plugin.ap.PluginDependency;
 import me.rickylafleur.domaintracker.commands.JoinsCommand;
 import me.rickylafleur.domaintracker.listeners.JoinListener;
 import me.rickylafleur.domaintracker.storage.Database;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
@@ -32,7 +30,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
     private static DomainTracker plugin;
 
-    private final SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+    private final FastDateFormat format = FastDateFormat.getInstance("MM-dd-yyyy");
 
     private Database database;
 
@@ -75,26 +73,6 @@ public final class DomainTracker extends ExtendedJavaPlugin {
         reloadConfig();
     }
 
-    public YamlConfiguration getConfig(String path) {
-        if (!getFile(path).exists() && getResource(path) != null) {
-            saveResource(path, true);
-        }
-
-        return YamlConfiguration.loadConfiguration(getFile(path));
-    }
-
-    public void saveConfig(YamlConfiguration config, String path) {
-        try {
-            config.save(getFile(path));
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Failed to save config", e);
-        }
-    }
-
-    public File getFile(String path) {
-        return new File(getDataFolder(), path.replace('/', File.separatorChar));
-    }
-
     public Database getDatabase() {
         return database;
     }
@@ -103,7 +81,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
         return maxMindReader;
     }
 
-    public SimpleDateFormat getFormat() {
+    public FastDateFormat getFormat() {
         return format;
     }
 
