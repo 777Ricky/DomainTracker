@@ -24,9 +24,9 @@ domains:
 
 # Fill in what each domain should display as when running the command in order
 display:
-  - "test1"
-  - "test2"
-  - "test3"
+  - "play"
+  - "hub"
+  - "fun"
 
 # List of every country you can remove unwanted ones if you would like
 countries:
