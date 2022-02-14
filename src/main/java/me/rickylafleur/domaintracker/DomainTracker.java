@@ -22,7 +22,7 @@ import java.util.zip.GZIPInputStream;
 
 @Plugin(
         name = "DomainTracker",
-        version = "1.0",
+        version = "1.1",
         authors = {"Ricky Lafleur"},
         apiVersion = "1.18"
 )
