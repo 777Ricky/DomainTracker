@@ -13,9 +13,10 @@ import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -33,12 +34,6 @@ public class Database {
 
     public void connect() throws SQLException {
         helperSql = new HelperSql(DatabaseCredentials.fromConfig(plugin.getConfig().getConfigurationSection("mysql")));
-
-/*            connection = DriverManager.getConnection(
-                    "jdbc:mysql://" + plugin.getConfig().getString("mysql.address") + ":" + plugin.getConfig().getInt("mysql.port") + "/" + plugin.getConfig().getString("mysql.database") + "?useSSL=" + plugin.getConfig().getBoolean("mysql.useSSL"),
-                    plugin.getConfig().getString("mysql.username"),
-                    plugin.getConfig().getString("mysql.password")
-            );*/
 
         createTable();
     }
@@ -83,20 +78,6 @@ public class Database {
             ps.setString(3, domain);
             ps.setString(4, country);
         });
-
-/*        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO domain_tracker (DATE,UUID,DOMAIN,COUNTRY) VALUES (?,?,?,?);");
-
-            ps.setString(1, date);
-            ps.setString(2, uuid);
-            ps.setString(3, domain);
-            ps.setString(4, country);
-
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public Set<JoinData> getJoinData() {
@@ -150,14 +131,5 @@ public class Database {
 
     private void createTable() {
         helperSql.executeAsync("CREATE TABLE IF NOT EXISTS `domain_tracker` (`DATE` char(10), `UUID` char(36), `DOMAIN` char(50), `COUNTRY` char(50));");
-
-/*        try {
-            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS domain_tracker (`DATE` char(10), `UUID` char(36), `DOMAIN` char(50), `COUNTRY` char(50));");
-            ps.executeUpdate();
-
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
     }
 }

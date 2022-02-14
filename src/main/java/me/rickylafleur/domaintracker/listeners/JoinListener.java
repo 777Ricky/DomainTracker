@@ -2,7 +2,6 @@ package me.rickylafleur.domaintracker.listeners;
 
 import lombok.RequiredArgsConstructor;
 import me.lucko.helper.Events;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.terminable.TerminableConsumer;
 import me.lucko.helper.terminable.module.TerminableModule;
 import me.rickylafleur.domaintracker.DomainTracker;
