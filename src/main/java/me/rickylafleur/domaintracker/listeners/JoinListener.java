@@ -6,15 +6,11 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.terminable.TerminableConsumer;
 import me.lucko.helper.terminable.module.TerminableModule;
 import me.rickylafleur.domaintracker.DomainTracker;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import javax.annotation.Nonnull;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.logging.Level;
 
 /**
  * @author Ricky Lafleur
@@ -35,12 +31,12 @@ public class JoinListener implements TerminableModule {
                     if (plugin.getDatabase().playerExists(player.getUniqueId())) return;
 
                     if (plugin.getConfig().getStringList("domains").contains(hostname)) {
-                        Schedulers.async().run(() -> plugin.getDatabase().addData(
+                        plugin.getDatabase().addData(
                                 plugin.getFormat().format(new Date()),
                                 player.getUniqueId().toString(),
                                 hostname,
                                 plugin.getDatabase().getCountryFromIp(e.getAddress())
-                        ));
+                        );
                     }
                 })
                 .bindWith(consumer);

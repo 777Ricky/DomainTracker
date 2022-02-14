@@ -2,7 +2,6 @@ package me.rickylafleur.domaintracker.commands;
 
 import lombok.RequiredArgsConstructor;
 import me.lucko.helper.Commands;
-import me.lucko.helper.promise.Promise;
 import me.lucko.helper.terminable.TerminableConsumer;
 import me.lucko.helper.terminable.module.TerminableModule;
 import me.rayzr522.jsonmessage.JSONMessage;
@@ -13,9 +12,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Ricky Lafleur
@@ -37,39 +34,37 @@ public class JoinsCommand implements TerminableModule {
 
                     if (date.equalsIgnoreCase("today")) date = plugin.getFormat().format(new Date());
 
-                    String finalDate = date;
-                    Promise<Set<JoinData>> promise = Promise.start().thenApplyAsync(map -> plugin.getDatabase().getJoinData(finalDate));
+                    Set<JoinData> joinDataSet;
+                    if (date.equalsIgnoreCase("all")) {
+                        joinDataSet = plugin.getDatabase().getJoinData();
+                    } else {
+                        joinDataSet = plugin.getDatabase().getJoinData(date);
+                    }
 
-                    try {
-                        Set<JoinData> joinDataSet = promise.get();
+                    if (joinDataSet.isEmpty()) {
+                        player.sendMessage(Text.colorize("&cInvalid date or no joins for that date."));
+                        return;
+                    }
 
-                        if (joinDataSet.isEmpty()) {
-                            player.sendMessage(Text.colorize("&cInvalid date or no joins for that date."));
-                            return;
-                        }
+                    int i = 0;
+                    for (String domain : plugin.getConfig().getStringList("domains")) {
+                        List<JoinData> joins = joinDataSet.stream().filter(joinData -> joinData.getDomain().equals(domain)).sorted(Comparator.comparing(JoinData::getCountry)).collect(Collectors.toList());
+                        List<String> countries = joins.stream().map(JoinData::getCountry).collect(Collectors.toList());
 
-                        int i = 0;
-                        for (String domain : plugin.getConfig().getStringList("domains")) {
-                            List<JoinData> joins = joinDataSet.stream().filter(joinData -> joinData.getDomain().equals(domain)).sorted(Comparator.comparing(JoinData::getCountry)).collect(Collectors.toList());
-                            List<String> countries = joins.stream().map(JoinData::getCountry).collect(Collectors.toList());
+                        Map<String, Integer> countryJoins = new HashMap<>();
+                        plugin.getConfig().getStringList("countries").forEach(country -> {
+                            int frequency = Collections.frequency(countries, country);
 
-                            Map<String, Integer> countryJoins = new HashMap<>();
-                            plugin.getConfig().getStringList("countries").forEach(country -> {
-                                int frequency = Collections.frequency(countries, country);
+                            if (frequency <= 0) return;
 
-                                if (frequency <= 0) return;
+                            countryJoins.put(country, frequency);
+                        });
 
-                                countryJoins.put(country, frequency);
-                            });
+                        JSONMessage display = JSONMessage.create(Text.colorize("&a" + plugin.getConfig().getStringList("display").get(i) + " &8- &7" + joins.size() + " joins"))
+                                .tooltip(countryJoins.entrySet().stream().map(join -> Text.colorize("&a&l" + join.getKey() + " &8- &7" + join.getValue() + " joins")).collect(Collectors.joining("\n")));
 
-                            JSONMessage display = JSONMessage.create(Text.colorize("&a" + plugin.getConfig().getStringList("display").get(i) + " &8- &7" + joins.size() + " joins"))
-                                    .tooltip(countryJoins.entrySet().stream().map(join -> Text.colorize("&a&l" + join.getKey() + " &8- &7" + join.getValue() + " joins")).collect(Collectors.joining("\n")));
-
-                            display.send(player);
-                            i++;
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                        display.send(player);
+                        i++;
                     }
                 })
                 .register("domaintracker", "joins");
