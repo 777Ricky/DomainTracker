@@ -27,7 +27,7 @@ public class JoinListener implements TerminableModule {
                     Player player = e.getPlayer();
                     String hostname = e.getHostname();
 
-                    if (plugin.getConfig().getBoolean("only-count-unique") && player.hasPlayedBefore()) return;
+                    if (plugin.getConfig().getBoolean("only-count-unique", false) && player.hasPlayedBefore()) return;
 
                     if (plugin.getDatabase().playerExists(player.getUniqueId())) return;
 
