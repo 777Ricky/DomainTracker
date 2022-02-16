@@ -25,6 +25,9 @@ database:
   update:
     enabled: true
     every-x-days: 30
+    
+# Turning this setting to true will make it only count the join if they have never joined the server before
+only-count-unique: false
 
 # Fill in your domains you wish to track joins for below
 domains:
