@@ -23,8 +23,7 @@ import java.util.zip.GZIPInputStream;
 @Plugin(
         name = "DomainTracker",
         version = "1.1",
-        authors = {"Ricky Lafleur"},
-        apiVersion = "1.13"
+        authors = {"Ricky Lafleur"}
 )
 public final class DomainTracker extends ExtendedJavaPlugin {
 

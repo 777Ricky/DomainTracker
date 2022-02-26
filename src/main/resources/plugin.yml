@@ -1,5 +1,4 @@
 name: DomainTracker
 version: 1.1
 authors: [Ricky Lafleur]
-api-version: 1.13
 main: me.rickylafleur.domaintracker.DomainTracker
