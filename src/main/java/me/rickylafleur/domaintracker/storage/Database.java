@@ -13,10 +13,7 @@ import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -33,7 +30,7 @@ public class Database {
     }
 
     public void connect() throws SQLException {
-        helperSql = new HelperSql(DatabaseCredentials.fromConfig(plugin.getConfig().getConfigurationSection("mysql")));
+        this.helperSql = new HelperSql(DatabaseCredentials.fromConfig(Objects.requireNonNull(plugin.getConfig().getConfigurationSection("mysql"))));
 
         createTable();
     }
@@ -41,7 +38,7 @@ public class Database {
     public void disconnect() {
         if (isConnected()) {
             try {
-                helperSql.getConnection().close();
+                this.helperSql.getConnection().close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -50,7 +47,7 @@ public class Database {
 
     public boolean isConnected() {
         try {
-            helperSql.getConnection();
+            this.helperSql.getConnection();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -61,7 +58,7 @@ public class Database {
 
     public Connection getConnection() {
         try {
-            return helperSql.getConnection();
+            return this.helperSql.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -72,7 +69,7 @@ public class Database {
     public void addData(String date, String uuid, String domain, String country) {
         if (playerExists(UUID.fromString(uuid))) return;
 
-        helperSql.executeAsync("INSERT INTO domain_tracker (DATE,UUID,DOMAIN,COUNTRY) VALUES (?,?,?,?);", ps -> {
+        this.helperSql.executeAsync("INSERT INTO domain_tracker (DATE,UUID,DOMAIN,COUNTRY) VALUES (?,?,?,?);", ps -> {
             ps.setString(1, date);
             ps.setString(2, uuid);
             ps.setString(3, domain);
@@ -81,8 +78,8 @@ public class Database {
     }
 
     public Set<JoinData> getJoinData() {
-        return helperSql.queryAsync("SELECT * FROM domain_tracker;", rs -> {
-            Set<JoinData> joinDataSet = new HashSet<>();
+        return this.helperSql.queryAsync("SELECT * FROM domain_tracker;", rs -> {
+            final Set<JoinData> joinDataSet = new HashSet<>();
 
             while (rs.next()) {
                 joinDataSet.add(new JoinData(
@@ -98,8 +95,8 @@ public class Database {
     }
 
     public Set<JoinData> getJoinData(String date) {
-        return helperSql.queryAsync("SELECT * FROM domain_tracker WHERE DATE = ?;", ps -> ps.setString(1, date), rs -> {
-            Set<JoinData> joinDataSet = new HashSet<>();
+        return this.helperSql.queryAsync("SELECT * FROM domain_tracker WHERE DATE = ?;", ps -> ps.setString(1, date), rs -> {
+            final Set<JoinData> joinDataSet = new HashSet<>();
 
             while (rs.next()) {
                 joinDataSet.add(new JoinData(
@@ -114,12 +111,12 @@ public class Database {
     }
 
     public boolean playerExists(UUID uuid) {
-        return helperSql.queryAsync("SELECT * FROM domain_tracker WHERE `UUID` = ?;", ps -> ps.setString(1, uuid.toString()), ResultSet::next).join().orElse(false);
+        return this.helperSql.queryAsync("SELECT * FROM domain_tracker WHERE `UUID` = ?;", ps -> ps.setString(1, uuid.toString()), ResultSet::next).join().orElse(false);
     }
 
     public String getCountryFromIp(InetAddress address) {
         try {
-            CountryResponse response = plugin.getMaxMindReader().country(address);
+            final CountryResponse response = plugin.getMaxMindReader().country(address);
 
             return response.getCountry().getName();
         } catch (IOException | GeoIp2Exception e) {
@@ -130,6 +127,6 @@ public class Database {
     }
 
     private void createTable() {
-        helperSql.executeAsync("CREATE TABLE IF NOT EXISTS `domain_tracker` (`DATE` char(10), `UUID` char(36), `DOMAIN` char(50), `COUNTRY` char(50));");
+        this.helperSql.executeAsync("CREATE TABLE IF NOT EXISTS `domain_tracker` (`DATE` char(10), `UUID` char(36), `DOMAIN` char(50), `COUNTRY` char(50));");
     }
 }

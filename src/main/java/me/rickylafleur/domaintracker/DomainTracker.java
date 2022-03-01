@@ -43,16 +43,16 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
         reload();
 
-        database = new Database(this);
+        this.database = new Database(this);
 
         try {
-            database.connect();
+            this.database.connect();
         } catch (SQLException e) {
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
 
-        Bukkit.getLogger().log(Level.INFO, "Database connected successfully!");
+        Bukkit.getLogger().info("Database connected successfully!");
 
         Schedulers.async().run(this::checkDatabase);
 
@@ -65,7 +65,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
     @Override
     protected void disable() {
-        database.disconnect();
+        this.database.disconnect();
     }
 
     public void reload() {
@@ -74,15 +74,15 @@ public final class DomainTracker extends ExtendedJavaPlugin {
     }
 
     public Database getDatabase() {
-        return database;
+        return this.database;
     }
 
     public DatabaseReader getMaxMindReader() {
-        return maxMindReader;
+        return this.maxMindReader;
     }
 
     public FastDateFormat getFormat() {
-        return format;
+        return this.format;
     }
 
     public static DomainTracker getInstance() {
@@ -90,11 +90,11 @@ public final class DomainTracker extends ExtendedJavaPlugin {
     }
 
     private void checkDatabase() {
-        databaseFile = new File(getDataFolder(), "GeoIP2-Country.mmdb");
+        this.databaseFile = new File(getDataFolder(), "GeoIP2-Country.mmdb");
 
-        if (!databaseFile.exists()) {
+        if (!this.databaseFile.exists()) {
             if (getConfig().getBoolean("database.download-if-missing", true)) {
-                downloadDatabase();
+                this.downloadDatabase();
             } else {
                 Bukkit.getLogger().log(Level.SEVERE, "Cannot find GeoIP database.");
                 return;
@@ -102,11 +102,11 @@ public final class DomainTracker extends ExtendedJavaPlugin {
         } else if (getConfig().getBoolean("database.update.enabled", true)) {
             final long diff = new Date().getTime() - databaseFile.lastModified();
             if (diff / 24 / 3600 / 1000 > getConfig().getLong("database.update.every-x-days", 30)) {
-                downloadDatabase();
+                this.downloadDatabase();
             }
         }
         try {
-            maxMindReader = new DatabaseReader.Builder(databaseFile).build();
+            this.maxMindReader = new DatabaseReader.Builder(databaseFile).build();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,7 +128,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
             }
 
             url = url.replace("{LICENSEKEY}", licenseKey);
-            Bukkit.getLogger().log(Level.INFO, "Downloading GeoIP database.");
+            Bukkit.getLogger().info("Downloading GeoIP database.");
 
             final URL downloadUrl = new URL(url);
             final URLConnection connection = downloadUrl.openConnection();

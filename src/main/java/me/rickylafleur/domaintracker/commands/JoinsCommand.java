@@ -29,7 +29,7 @@ public class JoinsCommand implements TerminableModule {
                 .assertPermission("domaintracker.admin")
                 .assertUsage("<MM-dd-yyyy>")
                 .handler(c -> {
-                    Player player = c.sender();
+                    final Player player = c.sender();
                     String date = c.arg(0).parseOrFail(String.class);
 
                     if (date.equalsIgnoreCase("today")) date = plugin.getFormat().format(new Date());
@@ -46,12 +46,14 @@ public class JoinsCommand implements TerminableModule {
                         return;
                     }
 
+                    player.sendMessage(" ");
+
                     int i = 0;
                     for (String domain : plugin.getConfig().getStringList("domains")) {
-                        List<JoinData> joins = joinDataSet.stream().filter(joinData -> joinData.getDomain().equals(domain)).sorted(Comparator.comparing(JoinData::getCountry)).collect(Collectors.toList());
-                        List<String> countries = joins.stream().map(JoinData::getCountry).collect(Collectors.toList());
+                        final List<JoinData> joins = joinDataSet.stream().filter(joinData -> joinData.getDomain().equals(domain)).sorted(Comparator.comparing(JoinData::getCountry)).collect(Collectors.toList());
+                        final List<String> countries = joins.stream().map(JoinData::getCountry).collect(Collectors.toList());
 
-                        Map<String, Integer> countryJoins = new HashMap<>();
+                        final Map<String, Integer> countryJoins = new HashMap<>();
                         plugin.getConfig().getStringList("countries").forEach(country -> {
                             int frequency = Collections.frequency(countries, country);
 
@@ -60,12 +62,14 @@ public class JoinsCommand implements TerminableModule {
                             countryJoins.put(country, frequency);
                         });
 
-                        JSONMessage display = JSONMessage.create(Text.colorize("&a" + plugin.getConfig().getStringList("display").get(i) + " &8- &7" + joins.size() + " joins"))
+                        final JSONMessage display = JSONMessage.create(Text.colorize("&a" + plugin.getConfig().getStringList("display").get(i) + " &8- &7" + joins.size() + " joins"))
                                 .tooltip(countryJoins.entrySet().stream().map(join -> Text.colorize("&a&l" + join.getKey() + " &8- &7" + join.getValue() + " joins")).collect(Collectors.joining("\n")));
 
                         display.send(player);
                         i++;
                     }
+
+                    player.sendMessage(" ");
                 })
                 .register("domaintracker", "joins");
     }

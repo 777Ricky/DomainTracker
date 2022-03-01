@@ -24,8 +24,8 @@ public class JoinListener implements TerminableModule {
         Events.subscribe(PlayerLoginEvent.class)
                 .filter(e -> e.getResult() == PlayerLoginEvent.Result.ALLOWED)
                 .handler(e -> {
-                    Player player = e.getPlayer();
-                    String hostname = e.getHostname();
+                    final Player player = e.getPlayer();
+                    final String hostname = e.getHostname();
 
                     if (plugin.getConfig().getBoolean("only-count-unique", false) && player.hasPlayedBefore()) return;
 
