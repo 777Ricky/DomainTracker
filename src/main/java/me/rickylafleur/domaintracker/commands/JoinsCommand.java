@@ -4,14 +4,20 @@ import lombok.RequiredArgsConstructor;
 import me.lucko.helper.Commands;
 import me.lucko.helper.terminable.TerminableConsumer;
 import me.lucko.helper.terminable.module.TerminableModule;
-import me.rayzr522.jsonmessage.JSONMessage;
 import me.rickylafleur.domaintracker.DomainTracker;
 import me.rickylafleur.domaintracker.storage.objects.JoinData;
 import me.rickylafleur.domaintracker.utils.Text;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -62,10 +68,17 @@ public class JoinsCommand implements TerminableModule {
                             countryJoins.put(country, frequency);
                         });
 
-                        final JSONMessage display = JSONMessage.create(Text.colorize("&a" + plugin.getConfig().getStringList("display").get(i) + " &8- &7" + joins.size() + " joins"))
-                                .tooltip(countryJoins.entrySet().stream().map(join -> Text.colorize("&a&l" + join.getKey() + " &8- &7" + join.getValue() + " joins")).collect(Collectors.joining("\n")));
+                        final TextComponent textComponent = Component.text()
+                                .content(plugin.getConfig().getStringList("display").get(i) + " - " + joins.size() + " joins")
+                                .color(NamedTextColor.GREEN)
+                                .build().hoverEvent(Component.text().hoverEvent(HoverEvent.showText(Component.text(countryJoins.entrySet().stream()
+                                                .map(join -> join.getKey() + " - " + join.getValue() + " joins")
+                                                .collect(Collectors.joining("\n")))))
+                                        .color(NamedTextColor.GREEN)
+                                        .build());
 
-                        display.send(player);
+                        plugin.getLogger().log(Level.INFO, String.valueOf(countryJoins.entrySet().size()));
+                        player.sendMessage(textComponent);
                         i++;
                     }
 
