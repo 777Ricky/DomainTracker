@@ -1,34 +1,48 @@
 package me.rickylafleur.domaintracker.utils;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * @author Ricky Lafleur
- */
 public class Text {
 
-    private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+    private static final Pattern HEX_PATTERN = Pattern.compile("&(#\\w{6})");
 
-    public static String colorize(String message) {
-        Matcher matcher = pattern.matcher(message);
+    private Text() throws IllegalAccessException {
+        throw new IllegalAccessException();
+    }
+
+    public static String colorize(String string) {
+        var matcher = HEX_PATTERN.matcher(ChatColor.translateAlternateColorCodes('&', string));
+        var builder = new StringBuilder();
+
         while (matcher.find()) {
-            String hexCode = message.substring(matcher.start(), matcher.end());
-            String replaceSharp = hexCode.replace('#', 'x');
-
-            char[] ch = replaceSharp.toCharArray();
-            StringBuilder builder = new StringBuilder("");
-            for (char c : ch) {
-                builder.append("&").append(c);
-            }
-
-            message = message.replace(hexCode, builder.toString());
-            matcher = pattern.matcher(message);
+            matcher.appendReplacement(builder, ChatColor.of(matcher.group(1)).toString());
         }
 
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return matcher.appendTail(builder).toString();
     }
-}
 
+    public static List<String> colorize(List<String> strings) {
+        var toReturn = new ArrayList<String>();
+
+        for (String string : strings) {
+            toReturn.add(colorize(string));
+        }
+
+        return toReturn;
+    }
+
+    public static String[] colorize(String[] strings) {
+        var toReturn = new String[strings.length];
+
+        for (int i = 0; i < strings.length; i++) {
+            toReturn[i] = colorize(strings[i]);
+        }
+
+        return toReturn;
+    }
+
+}

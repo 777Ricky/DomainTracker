@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -71,13 +70,12 @@ public class JoinsCommand implements TerminableModule {
                         final TextComponent textComponent = Component.text()
                                 .content(plugin.getConfig().getStringList("display").get(i) + " - " + joins.size() + " joins")
                                 .color(NamedTextColor.GREEN)
-                                .build().hoverEvent(Component.text().hoverEvent(HoverEvent.showText(Component.text(countryJoins.entrySet().stream()
-                                                .map(join -> join.getKey() + " - " + join.getValue() + " joins")
-                                                .collect(Collectors.joining("\n")))))
+                                .hoverEvent(Component.text().hoverEvent(HoverEvent.showText(Component.text(countryJoins.entrySet().stream()
+                                                .map(join -> join.getKey() + " - " + join.getValue() + " joins").collect(Collectors.joining("\n")))))
                                         .color(NamedTextColor.GREEN)
-                                        .build());
+                                        .build())
+                                .build();
 
-                        plugin.getLogger().log(Level.INFO, String.valueOf(countryJoins.entrySet().size()));
                         player.sendMessage(textComponent);
                         i++;
                     }
