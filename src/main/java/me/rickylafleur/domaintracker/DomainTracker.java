@@ -4,6 +4,8 @@ import com.maxmind.geoip2.DatabaseReader;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.ap.Plugin;
+import me.lucko.helper.redis.RedisCredentials;
+import me.lucko.helper.redis.plugin.HelperRedis;
 import me.rickylafleur.domaintracker.commands.JoinsCommand;
 import me.rickylafleur.domaintracker.commands.ReloadCommand;
 import me.rickylafleur.domaintracker.listeners.JoinListener;
@@ -35,8 +37,12 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
     private Database database;
 
+
+    private HelperRedis redis;
+
     private DatabaseReader maxMindReader = null;
     private File databaseFile;
+
 
     @Override
     protected void enable() {
@@ -56,6 +62,8 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
         Schedulers.async().run(this::checkDatabase);
 
+        this.redis = new HelperRedis(RedisCredentials.fromConfig(getConfig().getConfigurationSection("redis")));
+
         // Commands
         bindModule(new JoinsCommand(this));
         bindModule(new ReloadCommand(this));
@@ -66,7 +74,12 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
     @Override
     protected void disable() {
-        this.database.disconnect();
+        database.disconnect();
+        try {
+            redis.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void reload() {
@@ -75,15 +88,19 @@ public final class DomainTracker extends ExtendedJavaPlugin {
     }
 
     public Database getDatabase() {
-        return this.database;
+        return database;
+    }
+
+    public HelperRedis getRedis() {
+        return redis;
     }
 
     public DatabaseReader getMaxMindReader() {
-        return this.maxMindReader;
+        return maxMindReader;
     }
 
     public FastDateFormat getFormat() {
-        return this.format;
+        return format;
     }
 
     public static DomainTracker getInstance() {
@@ -91,11 +108,11 @@ public final class DomainTracker extends ExtendedJavaPlugin {
     }
 
     private void checkDatabase() {
-        this.databaseFile = new File(getDataFolder(), "GeoIP2-Country.mmdb");
+        databaseFile = new File(getDataFolder(), "GeoIP2-Country.mmdb");
 
-        if (!this.databaseFile.exists()) {
+        if (!databaseFile.exists()) {
             if (getConfig().getBoolean("database.download-if-missing", true)) {
-                this.downloadDatabase();
+                downloadDatabase();
             } else {
                 Bukkit.getLogger().log(Level.SEVERE, "Cannot find GeoIP database.");
                 return;

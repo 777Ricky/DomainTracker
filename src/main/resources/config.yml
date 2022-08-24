@@ -6,6 +6,10 @@ mysql:
   password: ""
   useSSL: true
 
+redis:
+  address: "localhost"
+  port: 6379
+
 # Register on here https://www.maxmind.com/en/geolite2/signup?lang=en for a free GeoLite2 license key
 # Then fill in your license key below and restart the plugin
 database:

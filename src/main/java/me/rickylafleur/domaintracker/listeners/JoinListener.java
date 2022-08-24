@@ -2,6 +2,7 @@ package me.rickylafleur.domaintracker.listeners;
 
 import lombok.RequiredArgsConstructor;
 import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.terminable.TerminableConsumer;
 import me.lucko.helper.terminable.module.TerminableModule;
 import me.rickylafleur.domaintracker.DomainTracker;
@@ -36,9 +37,11 @@ public class JoinListener implements TerminableModule {
                         plugin.getDatabase().addData(
                                 plugin.getFormat().format(new Date()),
                                 player.getUniqueId().toString(),
-                                hostname,
+                                plugin.getRedis().getJedis().get("domaintracker:connected_via:" + player.getName()),
                                 plugin.getDatabase().getCountryFromIp(e.getAddress())
                         );
+
+                        Schedulers.async().runLater(() -> plugin.getRedis().getJedis().del("domaintracker:connected_via:" + player.getName()), 20L);
                     }
                 })
                 .bindWith(consumer);
