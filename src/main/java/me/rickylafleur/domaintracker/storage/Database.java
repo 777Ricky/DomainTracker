@@ -3,6 +3,7 @@ package me.rickylafleur.domaintracker.storage;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CountryResponse;
 import me.lucko.helper.sql.DatabaseCredentials;
+import me.lucko.helper.sql.Sql;
 import me.lucko.helper.sql.plugin.HelperSql;
 import me.rickylafleur.domaintracker.DomainTracker;
 import me.rickylafleur.domaintracker.storage.objects.JoinData;
@@ -23,7 +24,7 @@ public class Database {
 
     private final DomainTracker plugin;
 
-    private HelperSql helperSql;
+    private Sql helperSql;
 
     public Database(DomainTracker plugin) {
         this.plugin = plugin;
