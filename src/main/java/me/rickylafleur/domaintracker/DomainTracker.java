@@ -36,9 +36,6 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
     private Database database;
 
-
-    private HelperRedis redis;
-
     private DatabaseReader maxMindReader = null;
     private File databaseFile;
 
@@ -62,8 +59,6 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
         Schedulers.async().run(this::checkDatabase);
 
-        this.redis = new HelperRedis(RedisCredentials.fromConfig(getConfig().getConfigurationSection("redis")));
-
         // Commands
         bindModule(new JoinsCommand(this));
 
@@ -74,11 +69,6 @@ public final class DomainTracker extends ExtendedJavaPlugin {
     @Override
     protected void disable() {
         database.disconnect();
-        try {
-            redis.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void reload() {
@@ -88,10 +78,6 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
     public Database getDatabase() {
         return database;
-    }
-
-    public HelperRedis getRedis() {
-        return redis;
     }
 
     public DatabaseReader getMaxMindReader() {
