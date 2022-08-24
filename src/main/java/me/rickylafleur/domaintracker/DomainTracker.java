@@ -5,6 +5,7 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.ap.Plugin;
 import me.rickylafleur.domaintracker.commands.JoinsCommand;
+import me.rickylafleur.domaintracker.commands.ReloadCommand;
 import me.rickylafleur.domaintracker.listeners.JoinListener;
 import me.rickylafleur.domaintracker.storage.Database;
 import org.apache.commons.lang.time.FastDateFormat;
@@ -48,8 +49,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
         try {
             this.database.connect();
         } catch (SQLException e) {
-            e.printStackTrace();
-            getServer().getPluginManager().disablePlugin(this);
+            throw new RuntimeException(e);
         }
 
         Bukkit.getLogger().info("Database connected successfully!");
@@ -58,6 +58,7 @@ public final class DomainTracker extends ExtendedJavaPlugin {
 
         // Commands
         bindModule(new JoinsCommand(this));
+        bindModule(new ReloadCommand(this));
 
         // Listeners
         bindModule(new JoinListener(this));
