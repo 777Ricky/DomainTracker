@@ -37,11 +37,9 @@ public class JoinListener implements TerminableModule {
                         plugin.getDatabase().addData(
                                 plugin.getFormat().format(new Date()),
                                 player.getUniqueId().toString(),
-                                plugin.getRedis().getJedis().get("domaintracker:connected_via:" + player.getName()),
+                                hostname,
                                 plugin.getDatabase().getCountryFromIp(e.getAddress())
                         );
-
-                        Schedulers.async().runLater(() -> plugin.getRedis().getJedis().del("domaintracker:connected_via:" + player.getName()), 20L);
                     }
                 })
                 .bindWith(consumer);

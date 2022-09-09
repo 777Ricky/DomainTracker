@@ -4,8 +4,6 @@ import com.maxmind.geoip2.DatabaseReader;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.ap.Plugin;
-import me.lucko.helper.redis.RedisCredentials;
-import me.lucko.helper.redis.plugin.HelperRedis;
 import me.rickylafleur.domaintracker.commands.JoinsCommand;
 import me.rickylafleur.domaintracker.commands.ReloadCommand;
 import me.rickylafleur.domaintracker.listeners.JoinListener;
